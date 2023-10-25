@@ -5,7 +5,7 @@
     <script src="/vton/js/code.jquery.com_jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <img id="necklaceImage" src="/necklace/gchain.jpeg" alt="Necklace" style="height:500px;">
+    <img id="necklaceImage" src="/vton/necklace/gchain.jpeg" alt="Necklace" style="height:500px;">
     <canvas id="necklaceCanvas"></canvas>
     <div id="pointInfo" style="font-weight: bold;"></div>
     <button id="sendButton">Send Coordinates</button> <!-- New button for sending coordinates -->
@@ -104,35 +104,33 @@
 
 
         sendCoordinates.addEventListener('click',function () {
-                points = [];
-                //points = ['thorax_top_x','thorax_top_y','thorax_bottom_x','thorax_bottom_y'][topPoint.x,topPoint.y,bottomPoint.x,bottomPoint.y];
-                points['thorax_top_x'] = topPoint.x;
-                points['thorax_top_y'] = topPoint.y;
-                points['thorax_bottom_x'] = bottomPoint.x;
-                points['thorax_bottom_y'] = bottomPoint.y;
-                canvas.width = image.width;
-                canvas.height = image.height;
-                ctx.drawImage(image, 0, 0, image.width, image.height);
-                const base64Image = canvas.toDataURL('image/png');
-                console.log(base64Image); // This is the Base64 representation of the image
-                jQuery.ajax({
-                    url: '/preview',
-                    type: "POST",                   
-                    data: {                        
-                        image: base64Image,
-                        points: points
-                    },
-                    dataType: "json",
-                    success: function (data) {
-                        console.log(data);
-                    },
-                    error: function (error) {
-                        //console.log(`Error ${error}`);
-                        console.log(error);
-                        console.log("points : ")
-                        console.log(points);
-                    }
-                });
+            points = {};
+            points['thorax_top_x'] = topPoint.x;
+            points['thorax_top_y'] = topPoint.y;
+            points['thorax_bottom_x'] = bottomPoint.x;
+            points['thorax_bottom_y'] = bottomPoint.y;
+            //canvas.width = image.width;
+            //canvas.height = image.height;
+            //ctx.drawImage(image, 0, 0, image.width, image.height);
+            const base64Image = canvas.toDataURL('image/png');
+            jQuery.ajax({
+                url: '/getpixels-ajax.php',
+                type: "POST",
+                data: {
+                    points: points,
+                    jewellery_image: base64Image
+                },
+                dataType: "json",
+                success: function (data) {
+                    //console.log(data);
+                },
+                error: function (error) {
+                    //console.log(`Error ${error}`);
+                    console.log(error);
+                    console.log("points : ")
+                    console.log(points);
+                }
+            });
         });
     </script>
 </body>
